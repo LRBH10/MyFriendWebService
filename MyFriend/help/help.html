@@ -1,0 +1,77 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html><head>
+	<title>MyFriendGeolocalization API</title>
+<style type="text/css"></style></head>
+<body>
+<pre><span style="color:blue;">&lt;?xml version="1.0"?&gt;</span>
+<span style="color:blue;">&lt;api servedby="srv291"&gt;</span>
+  <span style="color:blue;">&lt;help info="" xml:space="preserve" /&gt;</span>
+  
+  
+  <b>**********************************************************************************************************</b>
+  <b>**                                                                                                      **</b>
+  <b>**                      This a help to use MyFriendGeolocation Api                                      **</b>
+  <b>**                                                                                                      **</b>
+  <b>**********************************************************************************************************</b>
+  
+Parameters:
+  format              - The format of the output
+                        One value: json, dump, (xml will come)
+                        Default: json
+
+
+  action              - What action you would like to perform. 
+                        One value: createuser, login, logout , update , addfriend, deletefriend, deleteuser, help
+                        Default: help
+
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : help  --- --- --- --- --- --- --- --- --- --- --- --- 
+
+<b>* action=help  *</b>
+  help to use the api
+    <a href="help.html">help.html</a>
+
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : createuser  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=createuser *</b>
+    Create user on the server and returned the token if success
+
+This module requires read rights
+Parameters:
+  pseudo          - (requiered) the pseudo name associated to the user
+  password        - (requiered) the password associated to the user
+  firstname       - (optional) the first name of the user
+  lastname        - (optional) the last name of the user
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : deleteuser  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=deleteuser *</b>
+    To delete user from database 
+Warning: 
+    he will be deleted from all users.
+
+This module requires read rights
+Parameters:
+  token          - (requiered) the pseudo name associated to the user
+  
+
+--- --- --- --- --- --- --- --- --- --- --- ---  --- --- --- ---  --- --- --- --- --- --- --- --- --- --- --- --- 
+
+<b>*** Credits: ***</b>
+   API developers:
+       "fistname"."lastname"@"mailserver"."com"
+       rabah dot laouadi at gmail dot com
+   
+   Please send your comments, suggestions and questions to rabah.laouadi@gmail.com
+   
+<span style="color:blue;">&lt;/help&gt;</span>
+<span style="color:blue;">&lt;/api&gt;</span>
+</pre>
+
+
+</body></html>
