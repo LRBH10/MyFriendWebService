@@ -20,8 +20,9 @@ and open the template in the editor.
   
 Parameters:
   format              - The format of the output
-                        One value: json, dump, (xml will come)
+                        One value: json 
                         Default: json
+                        Future : dump, xml (will come)
 
 
   action              - What action you would like to perform. 
@@ -48,6 +49,12 @@ Parameters:
   firstname       - (optional) the first name of the user
   lastname        - (optional) the last name of the user
 
+Example :
+        To create a user with pseudo 'bibouh123' and password 'rabah123' : 
+    <a href="api.php?action=createuser&pseudo=bibouh123&password=rabah123">api.php?action=createuser&pseudo=bibouh123&password=rabah123</a>
+        To create a user with pseudo 'bibouh123' and password 'rabah123' and firstname  'rabah' and last name 'LAOUADI' : 
+    <a href="api.php?action=createuser&pseudo=bibouh123&password=rabah123&firstname=rabah&lastname=LAOUADI">api.php?action=createuser&pseudo=bibouh123&password=rabah123&firstname=rabah&lastname=LAOUADI</a>
+
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : deleteuser  --- --- --- --- --- --- --- --- --- --- --- --- 
   
 <b>* action=deleteuser *</b>
@@ -58,7 +65,25 @@ Warning:
 This module requires read rights
 Parameters:
   token          - (requiered) the pseudo name associated to the user
+
+Example :
+    <a href="api.php?action=deleteuser&token=ec308451c1d095c528cfa3c009ea7235"> api.php?action=deleteuser&token=ec308451c1d095c528cfa3c009ea7235</a>
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : update  --- --- --- --- --- --- --- --- --- --- --- --- 
   
+<b>* action=update *</b>
+    To update user Longitude and latitude OR  visibility information
+
+This module requires read rights
+Parameters:
+  lon          - (requiered) the longitude postion
+  lat          - (requiered) the latitude postion
+  visible      - (optional) to change the tracker 
+
+
+
+
+
 
 --- --- --- --- --- --- --- --- --- --- --- ---  --- --- --- ---  --- --- --- --- --- --- --- --- --- --- --- --- 
 
