@@ -28,7 +28,7 @@ class Controller {
                 $error = array();
                 $error['what'] = 'error';
                 $error['type'] = 'action not found';
-                $error['actionNotFounded'] = $_GET['action'];
+                $error['info'] = "  '" . $_GET['action'] . "' does not supported";
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
             }
@@ -43,21 +43,15 @@ class Controller {
 
     public function createuser() {
         if (isset($_GET['pseudo']) && isset($_GET['password'])) {
-            $ps = isset($_GET['pseudo']);
-            $pass = isset($_GET['password']);
+            $ps = $_GET['pseudo'];
+            $pass = $_GET['password'];
             if ($this->checkuser($ps, $pass)) {
                 $this->createIt($ps, $pass);
             }
 
             /*             * *****        No pseudo and password Error */
         } else {
-            $error = array();
-            $error['what'] = 'error';
-            $error['type'] = 'missing field';
-            $error['info'] = "fields 'pseudo' and 'password' are required";
-            $result = json_encode($error, JSON_PRETTY_PRINT);
-            echo $result;
-            return FALSE;
+            $this->renderJSON("error", "missing field", "fields 'pseudo' and 'password' are required");
         }
     }
 
@@ -93,13 +87,9 @@ class Controller {
             $user = new OwerUser($ps, $pass);
             $user->save();
         }
-        $error = array();
-        $error['what'] = 'succes';
-        $error['type'] = 'user have been created';
-        $error['token'] = $user->getToken();
 
-        $result = json_encode($error, JSON_PRETTY_PRINT);
-        echo $result;
+
+        $this->renderJSON("succes", "user have been created");
     }
 
     /*     * ******************************************************** Action = deleteuser *****************************
@@ -109,38 +99,192 @@ class Controller {
     public function deleteuser() {
         if (isset($_GET['token'])) {
             $to = $_GET['token'];
-            $user =OwerUser::get($to); 
+            $user = OwerUser::get($to);
             if ($user != null) {
                 $user->delete();
-                $error = array();
-                $error['what'] = 'succes';
-                $error['type'] = 'user deleted';
-                $result = json_encode($error, JSON_PRETTY_PRINT);
-                echo $result;
-                
+                $this->renderJSON("succes", "user deleted");
             } else {
-                //************************* USER DOES NOT EXIST ************************************/
-                $error = array();
-                $error['what'] = 'error';
-                $error['type'] = 'user does not exist';
-                $error['info'] = "user with token '$to' does no exist in system";
-                $result = json_encode($error, JSON_PRETTY_PRINT);
-                echo $result;
+                $this->renderJSON("error", "user does not exist", "user with token '$to' does no exist in system");
             }
             /*             * *****        No token Error */
         } else {
-            $error = array();
-            $error['what'] = 'error';
-            $error['type'] = 'missing field';
-            $error['info'] = "fields 'token' is required";
-            $result = json_encode($error, JSON_PRETTY_PRINT);
-            echo $result;
+            $this->renderJSON("error", "missing field", "fields 'token' is required");
         }
     }
 
-    
-    
-    /************************************************************** Action = update  **************************/
+    /*     * ************************************************************ Action = update  *************************
+     * To update user Longitude and latitude
+     */
+
+    public function update() {
+        if (isset($_GET['token']) && isset($_GET['lon']) && isset($_GET['lat'])) {
+            $lon = $_GET['lon'];
+            $lat = $_GET['lat'];
+            $to = $_GET['token'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
+                $user->updateTo($lon, $lat);
+
+                $error = array();
+                $error['what'] = 'succes';
+                $error['type'] = 'user update';
+
+                if (isset($_GET['visible'])) {
+                    $vi = $_GET['visible'];
+                    if ($vi == 'true') {
+                        $user->updateVisibleTo(TRUE);
+                    } else if ($vi == 'false') {
+                        $user->updateVisibleTo(FALSE);
+                    } else {
+                        $error['warnning'] = " visible must be 'true' or 'false' ";
+                    }
+                }
+
+                $result = json_encode($error, JSON_PRETTY_PRINT);
+                echo $result;
+            } else {
+                $this->tokendoesnot($to);
+            }
+        } else {
+            $this->renderJSON("error", "missing field", "fields 'token' and 'lat' and 'lon' are required");
+        }
+    }
+
+    /**     * *********************************************** Action = login *************************************
+     *  To login into System
+     */
+    public function login() {
+        if (isset($_GET['pseudo']) && isset($_GET['password'])) {
+            $ps = $_GET['pseudo'];
+            $pass = $_GET['password'];
+            $user = OwerUser::get(OwerUser::generateToken($ps, $pass));
+            if ($user != null) {
+                $error = array();
+                $error['what'] = 'succes';
+                $error['type'] = 'user Connected';
+                $error['token'] = $user->getToken();
+                $error['publictoken'] = $user->getPublicToken();
+                $result = json_encode($error, JSON_PRETTY_PRINT);
+                echo $result;
+            } else {
+                $this->tokendoesnot("", false);
+            }
+
+
+            /*             * *****        No pseudo and password Error */
+        } else {
+            $this->renderJSON("error", "missing field", "fields 'pseudo' and 'password' are required");
+        }
+    }
+
+    /**     * *********************************************************** Action = addfriend **************************************
+     * 
+     */
+    public function addfriend() {
+        if (isset($_GET['token']) && isset($_GET['friendtoken'])) {
+            $to = $_GET['token'];
+            $fto = $_GET['friendtoken'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
+                if (OwerUser::existUSER($fto) && !$user->existfriend($fto)) {
+                    $user->addfriend($fto);
+                    $this->renderJSON("succes", "friend added");
+                } else {
+                    $this->renderJSON("error", "friend does'nt exist", "OR he is  in  list friends");
+                }
+            } else {
+                $this->renderJSON("error", "user does not exist", "the user with token $to does not exist");
+            }
+            /*             * *****        No pseudo and password Error */
+        } else {
+            $this->renderJSON("error", "missing field", "fields 'token' and 'friendtoken' are required");
+        }
+    }
+
+    /**     * *********************************************************** Action = deletefriend **************************************
+     * 
+     */
+    public function deletefriend() {
+        if (isset($_GET['token']) && isset($_GET['friendtoken'])) {
+            $to = $_GET['token'];
+            $fto = $_GET['friendtoken'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
+                if ($user->removefriend($fto)) {
+                    $this->renderJSON("success", "friend deleted", "Friend deleted");
+                } else {
+                    $this->renderJSON("success", "friend deleted", " Does Not exist");
+                }
+            } else {
+                $this->renderJSON("error", "user does not exist", "the user with token $to does not exist");
+            }
+            /*             * *****        No pseudo and password Error */
+        } else {
+            $this->renderJSON("error", "missing field", "fields 'token' and 'friendtoken' are required");
+        }
+    }
+
+    /**     * *********************************************************** Action = getfreinds **************************************
+     * 
+     */
+    public function getfriends() {
+        if (isset($_GET['token'])) {
+            $to = $_GET['token'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
+                $render = array();
+                $render['what'] = "succes";
+                $render['type'] = "friends infos";
+                $render['friends'] = $user->getfriendsInformation();
+                $result = json_encode($render, JSON_PRETTY_PRINT);
+                echo $result;
+            } else {
+                $this->renderJSON("error", "User Does Not Exist", "user with token $to does not exist in the system");
+            }
+            /*             * *****        No pseudo and password Error */
+        } else {
+            $this->renderJSON("error", "missing field", "fields 'token' are required");
+        }
+    }
+
+    /**     * *********************************************************** Action = getlocationfriend **************************************
+     * 
+     */
+    public function getlocationfriend() {
+        if (isset($_GET['token']) && isset($_GET['friendtoken'])) {
+            $to = $_GET['token'];
+            $fto = $_GET['friendtoken'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
+                if ($user->existfriend($fto)) {
+                    $render = array();
+                    $render['what'] = "succes";
+                    $render['type'] = "friends infos";
+                    $render['friends'] = $user->getlocation($fto);
+                    $result = json_encode($render, JSON_PRETTY_PRINT);
+                    echo $result;
+                } else {
+                    $this->renderJSON("error", "friend does'nt exist", "you must be freind with him");
+                }
+            } else {
+                $this->renderJSON("error", "user does not exist", "the user with token $to does not exist");
+            }
+            /*             * *****        No pseudo and password Error */
+        } else {
+            $this->renderJSON("error", "missing field", "fields 'token' and 'friendtoken' are required");
+        }
+    }
+
+    private function renderJSON($what, $type, $info = "", $details = "") {
+        $render = array();
+        $render['what'] = $what;
+        $render['type'] = $type;
+        $render['info'] = $info;
+        $render['details'] = $details;
+        $result = json_encode($render, JSON_PRETTY_PRINT);
+        echo $result;
+    }
+
 }
 
 ?>

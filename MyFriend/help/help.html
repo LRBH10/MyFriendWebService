@@ -26,7 +26,7 @@ Parameters:
 
 
   action              - What action you would like to perform. 
-                        One value: createuser, login, logout , update , addfriend, deletefriend, deleteuser, help
+                        One value: createuser, login, update , addfriend, deletefriend, deleteuser, help, friendlocation, getfriends
                         Default: help
 
 
@@ -36,6 +36,18 @@ Parameters:
   help to use the api
     <a href="help.html">help.html</a>
 
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : login  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=login *</b>
+    Create user on the server and returned the token if success
+
+This module requires read rights
+Parameters:
+  pseudo          - (requiered) the pseudo name associated to the user
+  password        - (requiered) the password associated to the user
+  
+Example :
+  <a href="api.php?action=login&pseudo=bibouh123&password=rabah123">api.php?action=login&pseudo=bibouh13&password=rabah123</a>
 
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : createuser  --- --- --- --- --- --- --- --- --- --- --- --- 
   
@@ -53,7 +65,7 @@ Example :
         To create a user with pseudo 'bibouh123' and password 'rabah123' : 
     <a href="api.php?action=createuser&pseudo=bibouh123&password=rabah123">api.php?action=createuser&pseudo=bibouh123&password=rabah123</a>
         To create a user with pseudo 'bibouh123' and password 'rabah123' and firstname  'rabah' and last name 'LAOUADI' : 
-    <a href="api.php?action=createuser&pseudo=bibouh123&password=rabah123&firstname=rabah&lastname=LAOUADI">api.php?action=createuser&pseudo=bibouh123&password=rabah123&firstname=rabah&lastname=LAOUADI</a>
+    <a href="api.php?action=createuser&pseudo=blazo123&password=nastov123&firstname=blazo&lastname=NASTOV">api.php?action=createuser&pseudo=blazo123&password=nastov123&firstname=blazo&lastname=NASTOV</a>
 
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : deleteuser  --- --- --- --- --- --- --- --- --- --- --- --- 
   
@@ -64,10 +76,13 @@ Warning:
 
 This module requires read rights
 Parameters:
-  token          - (requiered) the pseudo name associated to the user
+  token          - (requiered) the token name associated to the user
 
 Example :
-    <a href="api.php?action=deleteuser&token=ec308451c1d095c528cfa3c009ea7235"> api.php?action=deleteuser&token=ec308451c1d095c528cfa3c009ea7235</a>
+    delete bibouh123
+    <a href="api.php?action=deleteuser&token=b2501bb029faaea57f5c9585dfaa6f4b"> api.php?action=deleteuser&token=b2501bb029faaea57f5c9585dfaa6f4b</a>
+    delete blazo123
+    <a href="api.php?action=deleteuser&token=ecff499005d95e3c520887b6a1898357"> api.php?action=deleteuser&token=ecff499005d95e3c520887b6a1898357</a>
 
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : update  --- --- --- --- --- --- --- --- --- --- --- --- 
   
@@ -76,14 +91,74 @@ Example :
 
 This module requires read rights
 Parameters:
-  lon          - (requiered) the longitude postion
-  lat          - (requiered) the latitude postion
-  visible      - (optional) to change the tracker 
+  token          - (requiered) the pseudo name associated to the user
+  lon            - (requiered) the longitude postion
+  lat            - (requiered) the latitude postion
+  visible        - (optional) true or false : to change the tracker 
+
+Example : 
+    <a href="api.php?action=update&token=b2501bb029faaea57f5c9585dfaa6f4b&lat=5&lon=25&visible=true">api.php?action=update&token=b2501bb029faaea57f5c9585dfaa6f4b&lat=5&lon=25&visible=true</a>
+
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : addFriend  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=addfriend *</b>
+    To add Friend 
+
+This module requires read rights
+Parameters:
+  token          - (requiered) the pseudo name associated to the user
+  friendtoken    - (requiered) the longitude postion
+  
+Example : 
+    Add to Blazo Friend Rabah
+    <a href="api.php?action=addfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212">api.php?action=addfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212</a>
 
 
 
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : deletefriend  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=deletefriend *</b>
+    To delete friend
+
+This module requires read rights
+Parameters:
+  token          - (requiered) the pseudo name associated to the user
+  friendtoken    - (requiered) the longitude postion
+  
+Example : 
+    delete Rabah Friend  from blazo
+    <a href="api.php?action=deletefriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212">api.php?action=deletefriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212</a>
 
 
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : getfriends  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=deletefriend *</b>
+    To get friend for token given
+
+This module requires read rights
+Parameters:
+  token          - (requiered) the pseudo name associated to the user
+  
+  
+Example : 
+    delete Rabah Friend  from blazo
+    <a href="api.php?action=getfriends&token=7c0c42b72e21968b3ce31f70ef54a6b1">api.php?action=getfriends&token=7c0c42b72e21968b3ce31f70ef54a6b1</a>
+
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : getlocationfriend  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=getlocationfriend *</b>
+    To delete friend
+
+This module requires read rights
+Parameters:
+  token          - (requiered) the pseudo name associated to the user
+  friendtoken    - (requiered) the longitude postion
+  
+Example : 
+    delete Rabah Friend  from blazo
+    <a href="api.php?action=getlocationfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212">api.php?action=getlocationfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212</a>
 
 --- --- --- --- --- --- --- --- --- --- --- ---  --- --- --- ---  --- --- --- --- --- --- --- --- --- --- --- --- 
 

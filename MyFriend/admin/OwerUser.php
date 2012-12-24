@@ -36,34 +36,43 @@ class OwerUser {
      * @var String
      */
     private $token;
-    
-    
+
+    /**
+     * @var String
+     */
+    private $publictoken;
+
     /**
      * GETTERs and SETTERS 
      */
-    public function setFirstName($val){
+    public function setFirstName($val) {
         $this->firstName = $val;
     }
-    public function setLastName($val){
+
+    public function setLastName($val) {
         $this->lastName = $val;
     }
-    
-    public function getPseudo(){
+
+    public function getPseudo() {
         return $this->pseudo;
     }
-    
-    public function getLastName(){
+
+    public function getLastName() {
         return $this->lastName;
     }
-    
-    public function getFirstName(){
+
+    public function getFirstName() {
         return $this->firstName;
     }
-    
-    public function getToken(){
+
+    public function getToken() {
         return $this->token;
     }
-    
+
+    public function getPublicToken() {
+        return $this->publictoken;
+    }
+
     /**
      *  to create user Object
      * @param string $pseudo
@@ -77,14 +86,22 @@ class OwerUser {
 
     private function gT() {
         $this->token = md5($this->pseudo . "_" . $this->password);
+        $this->publictoken = sha1($this->pseudo . "_" . $this->password);
     }
 
     public static function generateToken($ps, $pass) {
         return md5($ps . "_" . $pass);
     }
 
+    public static function generateTokenFriend($ps, $pass) {
+        return sha1($ps . "_" . $pass);
+    }
+
+    /**
+     * made it persistante (database );
+     */
     public function save() {
-        $req = "insert into  user values ('$this->token','$this->pseudo','$this->firstName','$this->lastName','$this->password')";
+        $req = "insert into  user values ('$this->token','$this->publictoken','$this->pseudo','$this->firstName','$this->lastName','$this->password')";
         Connection::getDbMapper()->execStatement($req);
 
         $date = date("l d-F-o (H:i:s) -e-");
@@ -111,20 +128,66 @@ class OwerUser {
     }
 
     /**
-     * 
+     * check if the user exist in the system
+     * @param type $token
+     * @return boolean
+     */
+    public static function existUSER($token) {
+        $req = "select * from user where publictoken='$token'";
+        $res = Connection::getDbMapper()->execStatement($req);
+        $userexist = false;
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $userexist = true;
+        }
+        mysqli_free_result($res);
+        return $userexist;
+    }
+
+    /**
+     *  add Friend  to USER
      * @param string $token_user
      * @param string $token_friend
      * @return Boolean
      */
-    public static function makefriends($token_user, $token_friend) {
-        if (OwerUser::get($token_user) != null && OwerUser::get($token_friend) != null) {
+    public function addfriend($token_friend) {
+        if (OwerUser::existUSER($token_friend)) {
             /** @var string */
-            $req = "insert into friends values('$token_user','$token_friend')";
+            $req = "insert into friends values('$this->token','$token_friend')";
             Connection::getDbMapper()->execStatement($req);
+            return TRUE;
+        } else {
+            Alert::information("l'un des 2 token n'existe pas ");
+            return FALSE;
+        }
+    }
 
+    /**
+     * check if the token given is a friend of this user 
+     * @param string $token_friend
+     * @return boolean
+     */
+    public function existfriend($token_friend) {
+        /** @var string */
+        $req = "select * from friends where id_user='$this->token' and id_user_f='$token_friend'";
+        $res = Connection::getDbMapper()->execStatement($req);
+        $userexist = false;
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $userexist = true;
+        }
+        mysqli_free_result($res);
+        return $userexist;
+    }
+
+    /**
+     * to remove A friend
+     * @param string $token_friend
+     * @return boolean
+     */
+    public function removefriend($token_friend) {
+        if ($this->existfriend($token_friend)) {
             /** @var string */
-            $req1 = "insert into friends values('$token_friend','$token_user')";
-            Connection::getDbMapper()->execStatement($req1);
+            $req = "delete from friends where id_user = '$this->token' and id_user_f ='$token_friend'";
+            Connection::getDbMapper()->execStatement($req);
             return TRUE;
         } else {
             Alert::information("l'un des 2 token n'existe pas ");
@@ -152,6 +215,9 @@ class OwerUser {
         Connection::getDbMapper()->execStatement($req);
     }
 
+    /**
+     * to delete user difinitvely from the system
+     */
     public function delete() {
         /** @var string */
         $req = "delete from usergeo where token_user='$this->token'";
@@ -162,6 +228,40 @@ class OwerUser {
 
         $req2 = "delete from user where token='$this->token'";
         Connection::getDbMapper()->execStatement($req2);
+    }
+
+    /**
+     * To get friends information (public token, first name , last name , pseudo )
+     */
+    public function getfriendsInformation() {
+        $req = "select  f.id_user_f as friendtokenpublic, u.pseudo , u.firstname, u.lastname  
+                    from friends f, user u 
+                    where f.id_user='$this->token' and f.id_user_f=u.publictoken";
+        
+        $res = Connection::getDbMapper()->execStatement($req);
+        $ret = array();
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $ret[] = $row;
+        }
+        mysqli_free_result($res);
+        return $ret;
+    }
+    
+    /**
+     * To get friends information (public token, first name , last name , pseudo )
+     */
+    public function getlocation($id_friend) {
+        $req = "select  g.lat, g.log as lon, g.time   
+                    from friends f, user u, usergeo g 
+                    where f.id_user='$this->token' and f.id_user_f='$id_friend' and f.id_user_f=u.publictoken and u.token = g.token_user";
+        
+        $res = Connection::getDbMapper()->execStatement($req);
+        $ret = array();
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $ret[] = $row;
+        }
+        mysqli_free_result($res);
+        return $ret;
     }
 
 }
