@@ -162,6 +162,9 @@ class Controller {
                 $error = array();
                 $error['what'] = 'succes';
                 $error['type'] = 'user Connected';
+                $error['pseudo'] = $user->getPseudo();
+                $error['firstName'] = $user->getFirstName();
+                $error['lastName'] = $user->getLastName();
                 $error['token'] = $user->getToken();
                 $error['publictoken'] = $user->getPublicToken();
                 $result = json_encode($error, JSON_PRETTY_PRINT);
