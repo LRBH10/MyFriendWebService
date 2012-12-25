@@ -26,9 +26,11 @@ class Controller {
                 $controller->$action();
             } else {
                 $error = array();
-                $error['what'] = 'error';
+                $error['what'] = API_ERROR;
                 $error['type'] = 'action not found';
                 $error['info'] = "  '" . $_GET['action'] . "' does not supported";
+                $error['details'] = '';
+
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
             }
@@ -51,7 +53,7 @@ class Controller {
 
             /*             * *****        No pseudo and password Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'pseudo' and 'password' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'pseudo' and 'password' are required");
         }
     }
 
@@ -62,8 +64,11 @@ class Controller {
         /*         * ****** Error when the User is existing before ************************* */
         if (OwerUser::get(OwerUser::generateToken($ps, $pass))) {
             $error = array();
-            $error['what'] = 'error';
+            $error['what'] = API_ERROR;
             $error['type'] = 'user exist';
+            $error['info'] = 'the user exist into database';
+            $error['details'] = 'recover password is not disponable for NOW';
+
             $result = json_encode($error, JSON_PRETTY_PRINT);
             echo $result;
             return FALSE;
@@ -89,7 +94,7 @@ class Controller {
         }
 
 
-        $this->renderJSON("succes", "user have been created");
+        $this->renderJSON(API_SUCCESS, "user have been created");
     }
 
     /*     * ******************************************************** Action = deleteuser *****************************
@@ -102,13 +107,13 @@ class Controller {
             $user = OwerUser::get($to);
             if ($user != null) {
                 $user->delete();
-                $this->renderJSON("succes", "user deleted");
+                $this->renderJSON(API_SUCCESS, "user deleted");
             } else {
-                $this->renderJSON("error", "user does not exist", "user with token '$to' does no exist in system");
+                $this->renderJSON(API_ERROR, "user does not exist", "user with token '$to' does no exist in system");
             }
             /*             * *****        No token Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'token' is required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' is required");
         }
     }
 
@@ -126,8 +131,10 @@ class Controller {
                 $user->updateTo($lon, $lat);
 
                 $error = array();
-                $error['what'] = 'succes';
+                $error['what'] = API_SUCCESS;
                 $error['type'] = 'user update';
+                $error['info'] = '';
+                $error['details'] = '';
 
                 if (isset($_GET['visible'])) {
                     $vi = $_GET['visible'];
@@ -146,7 +153,7 @@ class Controller {
                 $this->tokendoesnot($to);
             }
         } else {
-            $this->renderJSON("error", "missing field", "fields 'token' and 'lat' and 'lon' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'lat' and 'lon' are required");
         }
     }
 
@@ -160,13 +167,16 @@ class Controller {
             $user = OwerUser::get(OwerUser::generateToken($ps, $pass));
             if ($user != null) {
                 $error = array();
-                $error['what'] = 'succes';
+                $error['what'] = API_SUCCESS;
                 $error['type'] = 'user Connected';
                 $error['pseudo'] = $user->getPseudo();
                 $error['firstName'] = $user->getFirstName();
                 $error['lastName'] = $user->getLastName();
                 $error['token'] = $user->getToken();
                 $error['publictoken'] = $user->getPublicToken();
+                $render['info'] = "user info";
+                $render['details'] = "the public token will given to add friend";
+
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
             } else {
@@ -176,7 +186,7 @@ class Controller {
 
             /*             * *****        No pseudo and password Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'pseudo' and 'password' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'pseudo' and 'password' are required");
         }
     }
 
@@ -191,16 +201,16 @@ class Controller {
             if ($user != null) {
                 if (OwerUser::existUSER($fto) && !$user->existfriend($fto)) {
                     $user->addfriend($fto);
-                    $this->renderJSON("succes", "friend added");
+                    $this->renderJSON(API_SUCCESS, "friend added");
                 } else {
-                    $this->renderJSON("error", "friend does'nt exist", "OR he is  in  list friends");
+                    $this->renderJSON(API_ERROR, "friend does'nt exist", "OR he is  in  list friends");
                 }
             } else {
-                $this->renderJSON("error", "user does not exist", "the user with token $to does not exist");
+                $this->renderJSON(API_ERROR, "user does not exist", "the user with token $to does not exist");
             }
             /*             * *****        No pseudo and password Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'token' and 'friendtoken' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'friendtoken' are required");
         }
     }
 
@@ -214,16 +224,16 @@ class Controller {
             $user = OwerUser::get($to);
             if ($user != null) {
                 if ($user->removefriend($fto)) {
-                    $this->renderJSON("success", "friend deleted", "Friend deleted");
+                    $this->renderJSON(API_SUCCESS, "friend deleted", "Friend deleted");
                 } else {
-                    $this->renderJSON("success", "friend deleted", " Does Not exist");
+                    $this->renderJSON(API_SUCCESS, "friend deleted", " Does Not exist");
                 }
             } else {
-                $this->renderJSON("error", "user does not exist", "the user with token $to does not exist");
+                $this->renderJSON(API_ERROR, "user does not exist", "the user with token $to does not exist");
             }
             /*             * *****        No pseudo and password Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'token' and 'friendtoken' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'friendtoken' are required");
         }
     }
 
@@ -236,17 +246,20 @@ class Controller {
             $user = OwerUser::get($to);
             if ($user != null) {
                 $render = array();
-                $render['what'] = "succes";
+                $render['what'] = API_SUCCESS;
                 $render['type'] = "friends infos";
                 $render['friends'] = $user->getfriendsInformation();
+                $render['info'] = "get information of friends";
+                $render['details'] = "";
+
                 $result = json_encode($render, JSON_PRETTY_PRINT);
                 echo $result;
             } else {
-                $this->renderJSON("error", "User Does Not Exist", "user with token $to does not exist in the system");
+                $this->renderJSON(API_ERROR, "User Does Not Exist", "user with token $to does not exist in the system");
             }
             /*             * *****        No pseudo and password Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'token' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' are required");
         }
     }
 
@@ -261,20 +274,23 @@ class Controller {
             if ($user != null) {
                 if ($user->existfriend($fto)) {
                     $render = array();
-                    $render['what'] = "succes";
-                    $render['type'] = "friends infos";
+                    $render['what'] = API_SUCCESS;
+                    $render['type'] = "friend's infos";
+                    $render['info'] = "get location of friend";
+                    $render['details'] = "";
+
                     $render['friends'] = $user->getlocation($fto);
                     $result = json_encode($render, JSON_PRETTY_PRINT);
                     echo $result;
                 } else {
-                    $this->renderJSON("error", "friend does'nt exist", "you must be freind with him");
+                    $this->renderJSON(API_ERROR, "friend does'nt exist", "you must be freind with him");
                 }
             } else {
-                $this->renderJSON("error", "user does not exist", "the user with token $to does not exist");
+                $this->renderJSON(API_ERROR, "user does not exist", "the user with token $to does not exist");
             }
             /*             * *****        No pseudo and password Error */
         } else {
-            $this->renderJSON("error", "missing field", "fields 'token' and 'friendtoken' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'friendtoken' are required");
         }
     }
 

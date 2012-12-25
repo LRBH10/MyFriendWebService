@@ -234,7 +234,7 @@ class OwerUser {
      * To get friends information (public token, first name , last name , pseudo )
      */
     public function getfriendsInformation() {
-        $req = "select  f.id_user_f as friendtokenpublic, u.pseudo , u.firstname, u.lastname  
+        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName 
                     from friends f, user u 
                     where f.id_user='$this->token' and f.id_user_f=u.publictoken";
         
