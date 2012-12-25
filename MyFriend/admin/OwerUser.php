@@ -223,7 +223,7 @@ class OwerUser {
         $req = "delete from usergeo where token_user='$this->token'";
         Connection::getDbMapper()->execStatement($req);
 
-        $req1 = "delete from friends where id_user='$this->token' or id_user_f = '$this->token'";
+        $req1 = "delete from friends where id_user='$this->token' or id_user_f = '$this->publictoken'";
         Connection::getDbMapper()->execStatement($req1);
 
         $req2 = "delete from user where token='$this->token'";
