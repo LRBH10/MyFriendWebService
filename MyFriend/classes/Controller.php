@@ -180,7 +180,7 @@ class Controller {
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
             } else {
-                $this->tokendoesnot("", false);
+                $this->renderJSON(API_ERROR,"user does not exist","","");
             }
 
 
