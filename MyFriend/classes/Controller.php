@@ -174,8 +174,8 @@ class Controller {
                 $error['lastName'] = $user->getLastName();
                 $error['token'] = $user->getToken();
                 $error['publictoken'] = $user->getPublicToken();
-                $render['info'] = "user info";
-                $render['details'] = "the public token will given to add friend";
+                $error['info'] = "user info";
+                $error['details'] = "the public token will given to add friend";
 
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
