@@ -264,6 +264,21 @@ class OwerUser {
         return $ret;
     }
 
+    
+    
+    public function searchFor($search){
+        $req ="SELECT pseudo, firstname, lastname, publictoken
+                FROM user
+                WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
+        
+        $res = Connection::getDbMapper()->execStatement($req);
+        $ret = array();
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $ret[] = $row;
+        }
+        mysqli_free_result($res);
+        return $ret;
+    }
 }
 
 ?>

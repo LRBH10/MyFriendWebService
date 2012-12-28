@@ -294,6 +294,34 @@ class Controller {
         }
     }
 
+/***************************************************** Action=searchfriends ************************************
+ * 
+ */    
+  public function searchfriends() {
+        if (isset($_GET['token'])&& isset($_GET['search'])) {
+            $to = $_GET['token'];
+            $search = $_GET['search'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
+                $render = array();
+                $render['what'] = API_SUCCESS;
+                $render['type'] = "search friend";
+                $render['friends'] = $user->searchFor($search);
+                $render['info'] = "get a list of friends when they exist";
+                $render['details'] = "search for :  '$search'";
+
+                $result = json_encode($render, JSON_PRETTY_PRINT);
+                echo $result;
+            } else {
+                $this->renderJSON(API_ERROR, "User Does Not Exist", "user with token $to does not exist in the system");
+            }
+            /*             * *****        No pseudo and password Error */
+        } else {
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'search' are required");
+        }
+  }
+    
+    
     private function renderJSON($what, $type, $info = "", $details = "") {
         $render = array();
         $render['what'] = $what;
@@ -303,6 +331,7 @@ class Controller {
         $result = json_encode($render, JSON_PRETTY_PRINT);
         echo $result;
     }
+
 
 }
 
