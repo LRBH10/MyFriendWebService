@@ -51,8 +51,8 @@ class Controller {
         if (isset($_GET['pseudo']) && isset($_GET['password'])) {
             $ps = $_GET['pseudo'];
             $pass = $_GET['password'];
-            if ($this->checkuser($ps, $pass)) {
-                $this->createIt($ps, $pass);
+            if ($this->checkuser($ps, $pass) && !OwerUser::existPseudo($ps)) {
+                $this->createIt($ps, $pass); 
             }
 
             /*             * *****        No pseudo and password Error */

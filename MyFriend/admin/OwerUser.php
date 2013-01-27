@@ -158,6 +158,22 @@ class OwerUser {
         return $user;
     }
 
+    
+    /**
+     * check if the user exist in the system
+     * @param type $token
+     * @return boolean
+     */
+    public static function existPseudo($pseudo) {
+        $req = "select * from user where pseudo='$pseudo'";
+        $res = Connection::getDbMapper()->execStatement($req);
+        $userexist = false;
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $userexist = true;
+        }
+        mysqli_free_result($res);
+        return $userexist;
+    }
     /**
      * check if the user exist in the system
      * @param type $token
