@@ -142,7 +142,7 @@ class OwerUser {
         Connection::getDbMapper()->execStatement($req);
 
         $date = date("l d-F-o (H:i:s) -e-");
-        $req1 = "insert into  usergeo values ('$this->token','0.0','0.0','$date','TRUE')";
+        $req1 = "insert into  usergeo values ('$this->token','0.0','0.0','$date','1')";
         Connection::getDbMapper()->execStatement($req1);
     }
 
@@ -307,7 +307,7 @@ class OwerUser {
                     where f.id_user='$this->token' 
                     and f.id_user_f=u.publictoken 
                     and g.token_user = (select u1.token from user u1  where publictoken = f.id_user_f)
-                    and g.visible = 'TRUE'";
+                    and g.visible = '1'";
 
         $res = Connection::getDbMapper()->execStatement($req);
         $ret = array();

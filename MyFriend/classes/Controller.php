@@ -52,7 +52,7 @@ class Controller {
             $ps = $_GET['pseudo'];
             $pass = $_GET['password'];
             if ($this->checkuser($ps, $pass) && !OwerUser::existPseudo($ps)) {
-                $this->createIt($ps, $pass); 
+                $this->createIt($ps, $pass);
             }
 
             /*             * *****        No pseudo and password Error */
@@ -72,12 +72,12 @@ class Controller {
             $imagelink = $_GET['imagelink'];
             $number = $_GET['number'];
 
-            
+
             $to = $_GET['token'];
             $user = OwerUser::get($to);
 
             if ($user != null) {
-                $user->updateInfotmations($city, $age, $imagelink,$number);
+                $user->updateInfotmations($city, $age, $imagelink, $number);
 
                 $error = array();
                 $error['what'] = API_SUCCESS;
@@ -169,31 +169,36 @@ class Controller {
             $user = OwerUser::get($to);
             if ($user != null) {
                 $user->updateTo($lon, $lat);
+                $this->renderJSON(API_SUCCESS, "user update", "updated of langitude and latitude","to $lon,$lat");
+            } else {
+                $this->tokendoesnot($to);
+            }
+        } else if (isset($_GET['token']) && isset($_GET['visible'])) {
+            $to = $_GET['token'];
+            $vi = $_GET['visible'];
+            $user = OwerUser::get($to);
+            if ($user != null) {
 
                 $error = array();
                 $error['what'] = API_SUCCESS;
                 $error['type'] = 'user update';
-                $error['info'] = '';
-                $error['details'] = '';
+                $error['info'] = 'user visibily updated';
+                $error['details'] = 'to '.$vi;
 
-                if (isset($_GET['visible'])) {
-                    $vi = $_GET['visible'];
-                    if ($vi == 'true') {
-                        $user->updateVisibleTo(TRUE);
-                    } else if ($vi == 'false') {
-                        $user->updateVisibleTo(FALSE);
-                    } else {
-                        $error['warnning'] = " visible must be 'true' or 'false' ";
-                    }
+                if ($vi == 'true') {
+                    $user->updateVisibleTo(TRUE);
+                } else if ($vi == 'false') {
+                    $user->updateVisibleTo(FALSE);
+                } else {
+                    $error['details'] = " visible must be 'true' or 'false' ";
                 }
-
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
             } else {
                 $this->tokendoesnot($to);
             }
         } else {
-            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'lat' and 'lon' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and ('lat','lon') or ('visible') are required");
         }
     }
 
