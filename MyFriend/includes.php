@@ -8,5 +8,5 @@ include_once 'help/Alert.php';
 define('API_SUCCESS', "success");
 define('API_ERROR', "error");
 
-Connection::getDbMapper("myfriend");
+Connection::getDbMapper("myfriends");
 ?>

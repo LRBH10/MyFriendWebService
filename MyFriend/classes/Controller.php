@@ -39,9 +39,10 @@ class Controller {
         }
     }
 
-    public function  map(){
+    public function map() {
         include 'index.php';
     }
+
     /*     * ************************************************************* Action = createuser
      * Create User Action
      */
@@ -57,6 +58,40 @@ class Controller {
             /*             * *****        No pseudo and password Error */
         } else {
             $this->renderJSON(API_ERROR, "missing field", "fields 'pseudo' and 'password' are required");
+        }
+    }
+
+    /*     * ************************************************************* Action = updateuser
+     * Create User Action
+     */
+
+    public function updateuser() {
+        if (isset($_GET['token']) && isset($_GET['city']) && isset($_GET['age']) && isset($_GET['imagelink'])) {
+            $city = $_GET['city'];
+            $age = $_GET['age'];
+            $imagelink = $_GET['imagelink'];
+
+            $to = $_GET['token'];
+            $user = OwerUser::get($to);
+
+            if ($user != null) {
+                $user->updateInfotmations($city, $age, $imagelink);
+
+                $error = array();
+                $error['what'] = API_SUCCESS;
+                $error['type'] = 'user update';
+                $error['info'] = 'update information ok';
+                $error['details'] = '';
+
+
+
+                $result = json_encode($error, JSON_PRETTY_PRINT);
+                echo $result;
+            } else {
+                $this->tokendoesnot($to);
+            }
+        } else {
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'city' and 'age' and 'imagelink' are required");
         }
     }
 
@@ -177,13 +212,17 @@ class Controller {
                 $error['lastName'] = $user->getLastName();
                 $error['token'] = $user->getToken();
                 $error['publictoken'] = $user->getPublicToken();
+                $error['age'] = $user->getAge();
+                $error['city'] = $user->getCity();
+                $error['imagelink'] = $user->getImageLink();
+
                 $error['info'] = "user info";
                 $error['details'] = "the public token will given to add friend";
 
                 $result = json_encode($error, JSON_PRETTY_PRINT);
                 echo $result;
             } else {
-                $this->renderJSON(API_ERROR,"user does not exist","","");
+                $this->renderJSON(API_ERROR, "user does not exist", "", "");
             }
 
 
@@ -297,11 +336,12 @@ class Controller {
         }
     }
 
-/***************************************************** Action=searchfriends ************************************
- * 
- */    
-  public function searchfriends() {
-        if (isset($_GET['token'])&& isset($_GET['search'])) {
+    /*     * *************************************************** Action=searchfriends ************************************
+     * 
+     */
+
+    public function searchfriends() {
+        if (isset($_GET['token']) && isset($_GET['search'])) {
             $to = $_GET['token'];
             $search = $_GET['search'];
             $user = OwerUser::get($to);
@@ -322,9 +362,8 @@ class Controller {
         } else {
             $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'search' are required");
         }
-  }
-    
-    
+    }
+
     private function renderJSON($what, $type, $info = "", $details = "") {
         $render = array();
         $render['what'] = $what;
@@ -334,7 +373,6 @@ class Controller {
         $result = json_encode($render, JSON_PRETTY_PRINT);
         echo $result;
     }
-
 
 }
 

@@ -41,6 +41,9 @@ class OwerUser {
      * @var String
      */
     private $publictoken;
+    private $age;
+    private $imagelink;
+    private $city;
 
     /**
      * GETTERs and SETTERS 
@@ -49,8 +52,32 @@ class OwerUser {
         $this->firstName = $val;
     }
 
+    public function setAge($val) {
+        $this->age = $val;
+    }
+
+    public function setCity($val) {
+        $this->city = $val;
+    }
+
+    public function setImageLink($val) {
+        $this->imagelink = $val;
+    }
+
     public function setLastName($val) {
         $this->lastName = $val;
+    }
+
+    public function getAge() {
+        return $this->age;
+    }
+
+    public function getCity() {
+        return $this->city;
+    }
+
+    public function getImageLink() {
+        return $this->imagelink;
     }
 
     public function getPseudo() {
@@ -101,7 +128,7 @@ class OwerUser {
      * made it persistante (database );
      */
     public function save() {
-        $req = "insert into  user values ('$this->token','$this->publictoken','$this->pseudo','$this->firstName','$this->lastName','$this->password')";
+        $req = "insert into  user values ('$this->token','$this->publictoken','$this->pseudo','$this->firstName','$this->lastName','$this->password','$this->age','$this->city','$this->imagelink')";
         Connection::getDbMapper()->execStatement($req);
 
         $date = date("l d-F-o (H:i:s) -e-");
@@ -122,6 +149,10 @@ class OwerUser {
             $user = new OwerUser($row['pseudo'], $row['password']);
             $user->firstName = $row['firstname'];
             $user->lastName = $row['lastname'];
+            $user->age = $row['age'];
+            $user->imagelink = $row['imagelink'];
+            $user->city = $row['city'];
+            
         }
         mysqli_free_result($res);
         return $user;
@@ -205,6 +236,16 @@ class OwerUser {
         $req = "update usergeo set log ='$longitude', lat='$latitude',time='$date' where token_user='$this->token'";
         Connection::getDbMapper()->execStatement($req);
     }
+    
+     /**
+     * 
+     * @param Double $longitude
+     * @param Double $latitude
+     */
+    public function updateInfotmations($city, $age, $imagelink) {
+        $req = "update user set age ='$age', city='$city',imagelink='$imagelink' where token='$this->token'";
+        Connection::getDbMapper()->execStatement($req);
+    }
 
     /**
      * 
@@ -234,27 +275,10 @@ class OwerUser {
      * To get friends information (public token, first name , last name , pseudo )
      */
     public function getfriendsInformation() {
-        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName 
+        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName, u.age, u.city, u.imagelink as imageLink
                     from friends f, user u 
                     where f.id_user='$this->token' and f.id_user_f=u.publictoken";
-        
-        $res = Connection::getDbMapper()->execStatement($req);
-        $ret = array();
-        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
-            $ret[] = $row;
-        }
-        mysqli_free_result($res);
-        return $ret;
-    }
-    
-    /**
-     * To get friends information (public token, first name , last name , pseudo )
-     */
-    public function getlocation($id_friend) {
-        $req = "select  g.lat, g.log as lon, g.time   
-                    from friends f, user u, usergeo g 
-                    where f.id_user='$this->token' and f.id_user_f='$id_friend' and f.id_user_f=u.publictoken and u.token = g.token_user";
-        
+
         $res = Connection::getDbMapper()->execStatement($req);
         $ret = array();
         while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
@@ -264,13 +288,14 @@ class OwerUser {
         return $ret;
     }
 
-    
-    
-    public function searchFor($search){
-        $req ="SELECT pseudo, firstname, lastname, publictoken
-                FROM user
-                WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
-        
+    /**
+     * To get friends information (public token, first name , last name , pseudo )
+     */
+    public function getlocation($id_friend) {
+        $req = "select  g.lat, g.log as lon, g.time   
+                    from friends f, user u, usergeo g 
+                    where f.id_user='$this->token' and f.id_user_f='$id_friend' and f.id_user_f=u.publictoken and u.token = g.token_user";
+
         $res = Connection::getDbMapper()->execStatement($req);
         $ret = array();
         while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
@@ -279,6 +304,21 @@ class OwerUser {
         mysqli_free_result($res);
         return $ret;
     }
+
+    public function searchFor($search) {
+        $req = "SELECT pseudo, firstname, lastname, publictoken, u.age, u.city, u.imagelink as imageLink
+                FROM user
+                WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
+
+        $res = Connection::getDbMapper()->execStatement($req);
+        $ret = array();
+        while (($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) != NULL) {
+            $ret[] = $row;
+        }
+        mysqli_free_result($res);
+        return $ret;
+    }
+
 }
 
 ?>
