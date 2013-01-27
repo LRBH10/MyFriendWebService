@@ -337,6 +337,7 @@ class OwerUser {
 
     public function searchFor($search) {
         $req = "SELECT pseudo, firstname, lastname, publictoken, u.age, u.city, u.imagelink,u.number
+
                 FROM user
                 WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
 
