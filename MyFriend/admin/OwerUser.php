@@ -44,6 +44,8 @@ class OwerUser {
     private $age;
     private $imagelink;
     private $city;
+    
+    private $number;
 
     /**
      * GETTERs and SETTERS 
@@ -66,6 +68,14 @@ class OwerUser {
 
     public function setLastName($val) {
         $this->lastName = $val;
+    }
+
+    public function setNumber($val) {
+        $this->number = $val;
+    }
+
+    public function getNumber() {
+        return $this->number;
     }
 
     public function getAge() {
@@ -128,7 +138,7 @@ class OwerUser {
      * made it persistante (database );
      */
     public function save() {
-        $req = "insert into  user values ('$this->token','$this->publictoken','$this->pseudo','$this->firstName','$this->lastName','$this->password','$this->age','$this->city','$this->imagelink')";
+        $req = "insert into  user values ('$this->token','$this->publictoken','$this->pseudo','$this->firstName','$this->lastName','$this->password','$this->age','$this->city','$this->imagelink','$this->number')";
         Connection::getDbMapper()->execStatement($req);
 
         $date = date("l d-F-o (H:i:s) -e-");
@@ -152,6 +162,7 @@ class OwerUser {
             $user->age = $row['age'];
             $user->imagelink = $row['imagelink'];
             $user->city = $row['city'];
+            $user->number = $row['number'];
             
         }
         mysqli_free_result($res);
@@ -258,8 +269,8 @@ class OwerUser {
      * @param Double $longitude
      * @param Double $latitude
      */
-    public function updateInfotmations($city, $age, $imagelink) {
-        $req = "update user set age ='$age', city='$city',imagelink='$imagelink' where token='$this->token'";
+    public function updateInfotmations($city, $age, $imagelink, $number) {
+        $req = "update user set age ='$age', city='$city',imagelink='$imagelink', number='$number' where token='$this->token'";
         Connection::getDbMapper()->execStatement($req);
     }
 
@@ -291,9 +302,12 @@ class OwerUser {
      * To get friends information (public token, first name , last name , pseudo )
      */
     public function getfriendsInformation() {
-        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName, u.age, u.city, u.imagelink as imageLink
-                    from friends f, user u 
-                    where f.id_user='$this->token' and f.id_user_f=u.publictoken";
+        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName, u.age, u.city, u.imagelink, u.number, g.log, g.lat,g.time
+                    from friends f, user u, usergeo g 
+                    where f.id_user='$this->token' 
+                    and f.id_user_f=u.publictoken 
+                    and g.token_user = (select u1.token from user u1  where publictoken = f.id_user_f)
+                    and g.visible = 'TRUE'";
 
         $res = Connection::getDbMapper()->execStatement($req);
         $ret = array();
@@ -322,7 +336,7 @@ class OwerUser {
     }
 
     public function searchFor($search) {
-        $req = "SELECT pseudo, firstname, lastname, publictoken, u.age, u.city, u.imagelink as imageLink
+        $req = "SELECT pseudo, firstname, lastname, publictoken, u.age, u.city, u.imagelink,u.number
                 FROM user
                 WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
 

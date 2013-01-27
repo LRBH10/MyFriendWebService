@@ -66,16 +66,18 @@ class Controller {
      */
 
     public function updateuser() {
-        if (isset($_GET['token']) && isset($_GET['city']) && isset($_GET['age']) && isset($_GET['imagelink'])) {
+        if (isset($_GET['token']) && isset($_GET['city']) && isset($_GET['age']) && isset($_GET['imagelink']) && isset($_GET['number'])) {
             $city = $_GET['city'];
             $age = $_GET['age'];
             $imagelink = $_GET['imagelink'];
+            $number = $_GET['number'];
 
+            
             $to = $_GET['token'];
             $user = OwerUser::get($to);
 
             if ($user != null) {
-                $user->updateInfotmations($city, $age, $imagelink);
+                $user->updateInfotmations($city, $age, $imagelink,$number);
 
                 $error = array();
                 $error['what'] = API_SUCCESS;
@@ -91,7 +93,7 @@ class Controller {
                 $this->tokendoesnot($to);
             }
         } else {
-            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'city' and 'age' and 'imagelink' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'city' and 'age' and 'imagelink' and 'number' are required");
         }
     }
 
@@ -215,6 +217,7 @@ class Controller {
                 $error['age'] = $user->getAge();
                 $error['city'] = $user->getCity();
                 $error['imagelink'] = $user->getImageLink();
+                $error['number'] = $user->getNumber();
 
                 $error['info'] = "user info";
                 $error['details'] = "the public token will given to add friend";

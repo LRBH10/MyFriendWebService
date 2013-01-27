@@ -78,6 +78,24 @@ Example :
        To create count with mail
     <a href="api.php?action=createuser&pseudo=bibouh123@live.fr&password=rabah123">api.php?action=createuser&pseudo=bibouh123@live.fr&password=rabah123</a>
      
+
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : updateuser  --- --- --- --- --- --- --- --- --- --- --- --- 
+  
+<b>* action=updateuser *</b>
+    Create user on the server and returned the token if success
+
+This module requires read rights
+Parameters:
+  imagelink          - (requiered) the url of image
+  age                - (requiered) the age of user
+  city               - (requiered) the town of user
+  number             - (requiered) the phone number
+  
+
+Example :
+    update bibouh123
+    <a href="api.php?action=updateuser&token=b2501bb029faaea57f5c9585dfaa6f4b&imagelink=http://192.168.17.10/MyFriendWebService/MyFriend/images/rabah.jpg&age=24&city=Alger&number=0651238329"> api.php?action=updateuser&token=b2501bb029faaea57f5c9585dfaa6f4b&imagelink=http://192.168.17.10/MyFriendWebService/MyFriend/images/rabah.jpg&age=24&city=Alger&number=0651238329</a>
+   
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : deleteuser  --- --- --- --- --- --- --- --- --- --- --- --- 
   
 <b>* action=deleteuser *</b>
