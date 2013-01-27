@@ -39,6 +39,9 @@ class Controller {
         }
     }
 
+    public function  map(){
+        include 'index.php';
+    }
     /*     * ************************************************************* Action = createuser
      * Create User Action
      */

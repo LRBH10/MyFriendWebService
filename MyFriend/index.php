@@ -46,8 +46,7 @@
             //initialize
             function initialize(markersarray) {
                 var latlngmap ;
-                alert("change");
-        
+                
                 if(markersarray.length>0){
                     latlngmap = new google.maps.LatLng(markersarray[0].lat,markersarray[0].lng);
                 } else {

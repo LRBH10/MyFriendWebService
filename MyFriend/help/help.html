@@ -36,6 +36,12 @@ Parameters:
   help to use the api
     <a href="api.php">help.html</a>
 
+--- --- --- --- --- --- --- --- --- --- --- ---  Action : MAP  --- --- --- --- --- --- --- --- --- --- --- --- 
+
+<b>* action=map  *</b>
+  help to use the api
+    <a href="index.php?markers={who:'rabah',lat:36.752175,lng:3.042026},{who:'blazo',lat:41.433221,lng:22.008302}">index.php?markers={who:'rabah',lat:36.752175,lng:3.042026},{who:'blazo',lat:41.433221,lng:22.008302}</a>
+
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : login  --- --- --- --- --- --- --- --- --- --- --- --- 
   
 <b>* action=login *</b>
@@ -48,6 +54,7 @@ Parameters:
   
 Example :
   <a href="api.php?action=login&pseudo=bibouh123&password=rabah123">api.php?action=login&pseudo=bibouh13&password=rabah123</a>
+  <a href="api.php?action=login&pseudo=bibouh123@live.fr&password=rabah123">api.php?action=login&pseudo=bibouh13@live.fr&password=rabah123</a>
 
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : createuser  --- --- --- --- --- --- --- --- --- --- --- --- 
   
@@ -67,6 +74,10 @@ Example :
         To create a user with pseudo 'bibouh123' and password 'rabah123' and firstname  'rabah' and last name 'LAOUADI' : 
     <a href="api.php?action=createuser&pseudo=blazo123&password=nastov123&firstname=blazo&lastname=NASTOV">api.php?action=createuser&pseudo=blazo123&password=nastov123&firstname=blazo&lastname=NASTOV</a>
 
+
+       To create count with mail
+    <a href="api.php?action=createuser&pseudo=bibouh123@live.fr&password=rabah123">api.php?action=createuser&pseudo=bibouh123@live.fr&password=rabah123</a>
+     
 --- --- --- --- --- --- --- --- --- --- --- ---  Action : deleteuser  --- --- --- --- --- --- --- --- --- --- --- --- 
   
 <b>* action=deleteuser *</b>
@@ -113,6 +124,7 @@ Parameters:
 Example : 
     Add to Blazo Friend Rabah
     <a href="api.php?action=addfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212">api.php?action=addfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=3a19281e0b7bceaa37f5e7c09b762ddd81e3a212</a>
+    <a href="api.php?action=addfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=55be515e0ee8fdff8c2a4310f43500b998f92f03">api.php?action=addfriend&token=7c0c42b72e21968b3ce31f70ef54a6b1&friendtoken=f3647954fb5d3f815c244e1e1210564c</a> 
 
 
 
