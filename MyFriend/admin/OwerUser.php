@@ -275,7 +275,7 @@ class OwerUser {
      * To get friends information (public token, first name , last name , pseudo )
      */
     public function getfriendsInformation() {
-        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName, u.age, u.city, u.imagelink as imageLink
+        $req = "select  f.id_user_f as publictoken, u.pseudo , u.firstname as firstName, u.lastname as lastName, u.age, u.city, u.imagelink 
                     from friends f, user u 
                     where f.id_user='$this->token' and f.id_user_f=u.publictoken";
 
@@ -306,7 +306,7 @@ class OwerUser {
     }
 
     public function searchFor($search) {
-        $req = "SELECT pseudo, firstname, lastname, publictoken, u.age, u.city, u.imagelink as imageLink
+        $req = "SELECT pseudo, firstname, lastname, publictoken, u.age, u.city, u.imagelink 
                 FROM user
                 WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
 
