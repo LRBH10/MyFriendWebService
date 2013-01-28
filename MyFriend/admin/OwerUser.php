@@ -269,8 +269,8 @@ class OwerUser {
      * @param Double $longitude
      * @param Double $latitude
      */
-    public function updateInfotmations($city, $age, $imagelink, $number) {
-        $req = "update user set age ='$age', city='$city',imagelink='$imagelink', number='$number' where token='$this->token'";
+    public function updateInfotmations($firstname, $lastname,$city, $age, $imagelink, $number) {
+        $req = "update user set firstname='$firstname',lastname='$lastname',age ='$age', city='$city',imagelink='$imagelink', number='$number' where token='$this->token'";
         Connection::getDbMapper()->execStatement($req);
     }
 

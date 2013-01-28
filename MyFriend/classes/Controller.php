@@ -66,34 +66,27 @@ class Controller {
      */
 
     public function updateuser() {
-        if (isset($_GET['token']) && isset($_GET['city']) && isset($_GET['age']) && isset($_GET['imagelink']) && isset($_GET['number'])) {
+        if (isset($_GET['token']) && isset($_GET['city']) && isset($_GET['age']) && isset($_GET['imagelink']) 
+                && isset($_GET['number']) && isset($_GET['firstname']) && isset($_GET['lastname'])) {
             $city = $_GET['city'];
             $age = $_GET['age'];
             $imagelink = $_GET['imagelink'];
             $number = $_GET['number'];
-
+            $firstname = $_GET['firstname'];
+            $lastname = $_GET['lastname'];
 
             $to = $_GET['token'];
             $user = OwerUser::get($to);
 
             if ($user != null) {
-                $user->updateInfotmations($city, $age, $imagelink, $number);
-
-                $error = array();
-                $error['what'] = API_SUCCESS;
-                $error['type'] = 'user update';
-                $error['info'] = 'update information ok';
-                $error['details'] = '';
-
-
-
-                $result = json_encode($error, JSON_PRETTY_PRINT);
-                echo $result;
+                $user->updateInfotmations($firstname,$lastname,$city, $age, $imagelink, $number);
+                $this->renderJSON(API_SUCCESS, "update user information", "the information of user are changed ");
+                
             } else {
                 $this->tokendoesnot($to);
             }
         } else {
-            $this->renderJSON(API_ERROR, "missing field", "fields 'token' and 'city' and 'age' and 'imagelink' and 'number' are required");
+            $this->renderJSON(API_ERROR, "missing field", "fields 'token','city','age','imagelink','number','firstname','lastname' are required");
         }
     }
 
@@ -169,7 +162,7 @@ class Controller {
             $user = OwerUser::get($to);
             if ($user != null) {
                 $user->updateTo($lon, $lat);
-                $this->renderJSON(API_SUCCESS, "user update", "updated of langitude and latitude","to $lon,$lat");
+                $this->renderJSON(API_SUCCESS, "user update", "updated of langitude and latitude", "to $lon,$lat");
             } else {
                 $this->tokendoesnot($to);
             }
@@ -183,7 +176,7 @@ class Controller {
                 $error['what'] = API_SUCCESS;
                 $error['type'] = 'user update';
                 $error['info'] = 'user visibily updated';
-                $error['details'] = 'to '.$vi;
+                $error['details'] = 'to ' . $vi;
 
                 if ($vi == 'true') {
                     $user->updateVisibleTo(TRUE);
