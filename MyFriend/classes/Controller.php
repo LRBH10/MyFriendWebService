@@ -216,6 +216,7 @@ class Controller {
                 $error['city'] = $user->getCity();
                 $error['imagelink'] = $user->getImageLink();
                 $error['number'] = $user->getNumber();
+                $error['visible'] = $user->getVisible();
 
                 $error['info'] = "user info";
                 $error['details'] = "the public token will given to add friend";

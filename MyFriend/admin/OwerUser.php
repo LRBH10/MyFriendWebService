@@ -44,8 +44,8 @@ class OwerUser {
     private $age;
     private $imagelink;
     private $city;
-    
     private $number;
+    private $visible;
 
     /**
      * GETTERs and SETTERS 
@@ -72,6 +72,14 @@ class OwerUser {
 
     public function setNumber($val) {
         $this->number = $val;
+    }
+
+    public function setVisible($val) {
+        $this->visible = $val;
+    }
+
+    public function getVisible() {
+        return $this->visible;
     }
 
     public function getNumber() {
@@ -163,13 +171,18 @@ class OwerUser {
             $user->imagelink = $row['imagelink'];
             $user->city = $row['city'];
             $user->number = $row['number'];
-            
+            $req1 = "select visible from usergeo where token_user='$token'";
+            $res1 = Connection::getDbMapper()->execStatement($req1);
+            while (($row1 = mysqli_fetch_array($res1, MYSQLI_ASSOC)) != NULL) {
+                $user->visible = $row1['visible'];
+            }
+            mysqli_free_result($res1);
         }
         mysqli_free_result($res);
+
         return $user;
     }
 
-    
     /**
      * check if the user exist in the system
      * @param type $token
@@ -185,6 +198,7 @@ class OwerUser {
         mysqli_free_result($res);
         return $userexist;
     }
+
     /**
      * check if the user exist in the system
      * @param type $token
@@ -263,13 +277,13 @@ class OwerUser {
         $req = "update usergeo set log ='$longitude', lat='$latitude',time='$date' where token_user='$this->token'";
         Connection::getDbMapper()->execStatement($req);
     }
-    
-     /**
+
+    /**
      * 
      * @param Double $longitude
      * @param Double $latitude
      */
-    public function updateInfotmations($firstname, $lastname,$city, $age, $imagelink, $number) {
+    public function updateInfotmations($firstname, $lastname, $city, $age, $imagelink, $number) {
         $req = "update user set firstname='$firstname',lastname='$lastname',age ='$age', city='$city',imagelink='$imagelink', number='$number' where token='$this->token'";
         Connection::getDbMapper()->execStatement($req);
     }
