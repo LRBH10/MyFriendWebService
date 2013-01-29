@@ -338,7 +338,7 @@ class OwerUser {
     public function getlocation($id_friend) {
         $req = "select  g.lat, g.log as lon, g.time   
                     from friends f, user u, usergeo g 
-                    where f.id_user='$this->token' and f.id_user_f='$id_friend' and f.id_user_f=u.publictoken and u.token = g.token_user";
+                    where f.id_user='$this->token' and f.id_user_f='$id_friend' and f.id_user_f=u.publictoken and u.token = g.token_user and visible = '1'";
 
         $res = Connection::getDbMapper()->execStatement($req);
         $ret = array();
@@ -350,9 +350,10 @@ class OwerUser {
     }
 
     public function searchFor($search) {
-        $req = "SELECT pseudo, firstname, lastname, publictoken, age, city, imagelink,number
-                FROM user
-                WHERE pseudo like '%$search%' OR firstname like '%$search%' OR lastname like '%$search%' OR publictoken='$search'";
+        $req = "SELECT DISTINCT u.pseudo, u.firstname, u.lastname, u.publictoken, u.age, u.city, u.imagelink,u.number,g.visible
+                FROM user u, usergeo g
+                WHERE (u.pseudo like '%$search%' OR u.firstname like '%$search%' OR u.lastname like '%$search%' OR u.publictoken='$search')
+                AND g.token_user=u.token AND g.visible='1' and u.token<>'$this->token'";
 
         $res = Connection::getDbMapper()->execStatement($req);
         $ret = array();
@@ -362,6 +363,9 @@ class OwerUser {
         mysqli_free_result($res);
         return $ret;
     }
+    
+    
+    
 
 }
 

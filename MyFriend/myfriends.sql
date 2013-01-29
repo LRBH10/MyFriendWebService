@@ -6,6 +6,12 @@
 -- Généré le: Dim 27 Janvier 2013 à 22:59
 -- Version du serveur: 5.5.27-log
 -- Version de PHP: 5.4.6
+/*
+$mysql_host = "mysql12.000webhost.com";
+$mysql_database = "a6339411_friends";
+$mysql_user = "a6339411_bibouh";
+$mysql_password = "rabah123";
+//*/
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
